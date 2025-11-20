@@ -24,15 +24,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0E289CC42ECEBC29004CFE29 /* practice.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = practice.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		0E6143492ECC1E1800AEDAD0 /* Test_Store.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Test_Store.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E6143562ECC1E1A00AEDAD0 /* Test_StoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test_StoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E6143602ECC1E1A00AEDAD0 /* Test_StoreUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test_StoreUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0E61434B2ECC1E1800AEDAD0 /* Test_Store */ = {
+		0E61434B2ECC1E1800AEDAD0 /* Cafenated_Main */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Test_Store;
+			path = Cafenated_Main;
 			sourceTree = "<group>";
 		};
 		0E6143592ECC1E1A00AEDAD0 /* Test_StoreTests */ = {
@@ -75,7 +76,8 @@
 		0E6143402ECC1E1800AEDAD0 = {
 			isa = PBXGroup;
 			children = (
-				0E61434B2ECC1E1800AEDAD0 /* Test_Store */,
+				0E289CC42ECEBC29004CFE29 /* practice.playground */,
+				0E61434B2ECC1E1800AEDAD0 /* Cafenated_Main */,
 				0E6143592ECC1E1A00AEDAD0 /* Test_StoreTests */,
 				0E6143632ECC1E1A00AEDAD0 /* Test_StoreUITests */,
 				0E61434A2ECC1E1800AEDAD0 /* Products */,
@@ -108,7 +110,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				0E61434B2ECC1E1800AEDAD0 /* Test_Store */,
+				0E61434B2ECC1E1800AEDAD0 /* Cafenated_Main */,
 			);
 			name = Test_Store;
 			packageProductDependencies = (
@@ -186,7 +188,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 0E6143442ECC1E1800AEDAD0 /* Build configuration list for PBXProject "Test_Store" */;
+			buildConfigurationList = 0E6143442ECC1E1800AEDAD0 /* Build configuration list for PBXProject "Caffenated" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -533,7 +535,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0E6143442ECC1E1800AEDAD0 /* Build configuration list for PBXProject "Test_Store" */ = {
+		0E6143442ECC1E1800AEDAD0 /* Build configuration list for PBXProject "Caffenated" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0E6143682ECC1E1A00AEDAD0 /* Debug */,
