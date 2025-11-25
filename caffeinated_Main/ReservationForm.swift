@@ -22,9 +22,13 @@ struct ReservationForm: View {
     @State private var alergies = ""
     @State private var childrenCount = 0
     @State private var occasion = ""
+    @State private var isOutdoorSeats = true
+    @State private var UserWhantsOutdoorSeats = false
+    @State private var showValidationError = false
+    @State private var showConfirmation = false
     
     var body: some View {
-        Form{
+        Form {
             // Header
             Section{
                 Text(restaurantName)
@@ -39,14 +43,56 @@ struct ReservationForm: View {
                 TextField("Name", text: $userName)
                     .textInputAutocapitalization(.words)
                     .autocorrectionDisabled(true)
+                
+                // Name Validation
+                if userName.isEmpty {
+                    Text("Please enter a name.")
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                        .transition(.opacity.combined(with: .slide))
+                }
                     
                 // Constant
                 Stepper("Guests: \(guestCount)", value: $guestCount, in: 1 ... maxGuest)
+                    if guestCount > 8 {
+                        Text("Please note that for more than 8 guests you need to call ahead.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .transition(.opacity.combined(with: .slide))
+                }
+                
+                Toggle("Outdoor Seating", isOn: $UserWhantsOutdoorSeats)
+                    .disabled(!isOutdoorSeats)  // Desactiva el toggle si no hay outdoor disponible
+                    .onChange(of: isOutdoorSeats) {
+                        // Si outdoor se cierra, desactiva la selección del usuario
+                        if !isOutdoorSeats {
+                            UserWhantsOutdoorSeats = false
+                        }
+                    }
+                
+                if !isOutdoorSeats {
+                    Text("Outdoor seating is currently unavailable")
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                        .transition(.opacity.combined(with: .slide))
+                }
             }
             
             Section(header:Text("Contact")){
                 TextField("Phone", text:$phoneNumber)
                     .keyboardType(.numberPad)
+                
+                if phoneNumber.isEmpty {
+                    Text("Please enter a phone number.")
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                        .transition(.opacity.combined(with: .slide))
+                } else if !phoneNumber.allSatisfy({ $0.isNumber }) {
+                    Text("Please enter only numbers.")
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                        .transition(.opacity.combined(with: .slide))
+                }
                     
             }
             
@@ -60,6 +106,14 @@ struct ReservationForm: View {
                     .autocorrectionDisabled(true)
                 
                 Stepper("Children: \(childrenCount)", value: $childrenCount, in: 0 ... 10)
+                
+                if childrenCount > 0 {
+                    Text("Kids will get a free dessert!")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .transition(.opacity.combined(with: .slide))
+                }
+                
             }
             
             Section{
@@ -77,14 +131,55 @@ struct ReservationForm: View {
                     """
                 }
                 
-            }
-            
-            Section(header: Text("Preview")){
                 Text(previewText)
                     .font(.footnote)
                     .foregroundColor(.secondary)
+                    .transition(.opacity.combined(with: .slide))
+                
             }
+            
+            Section {
+                HStack {
+                    Spacer()
+                    Button("Confirm reservation") {
+                        if userName.isEmpty || phoneNumber.isEmpty || !phoneNumber.allSatisfy({ $0.isNumber }) {
+                            showValidationError = true
+                            showConfirmation = false
+                        } else {
+                            showValidationError = false
+                            showConfirmation = true
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    Spacer()
+                }
+                
+                if showConfirmation {
+                    Text("Reservación confirmada!")
+                        .font(.footnote)
+                        .foregroundColor(.green)
+                        .transition(.opacity.combined(with: .slide))
+                }
+                
+                if showValidationError {
+                    Text("Please fill all required fields correctly.")
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                        .transition(.opacity.combined(with: .slide))
+                }
+            }
+            
+            
         }
+        .animation(.easeInOut(duration: 0.3), value: userName.isEmpty)
+        .animation(.easeInOut(duration: 0.3), value: guestCount > 8)
+        .animation(.easeInOut(duration: 0.3), value: isOutdoorSeats)
+        .animation(.easeInOut(duration: 0.3), value: phoneNumber.isEmpty)
+        .animation(.easeInOut(duration: 0.3), value: phoneNumber.allSatisfy { $0.isNumber })
+        .animation(.easeInOut(duration: 0.3), value: childrenCount > 0)
+        .animation(.easeInOut(duration: 0.3), value: previewText.isEmpty)
+        .animation(.easeInOut(duration: 0.3), value: showValidationError)
+        .animation(.easeInOut(duration: 0.3), value: showConfirmation)
     }
 }
 
