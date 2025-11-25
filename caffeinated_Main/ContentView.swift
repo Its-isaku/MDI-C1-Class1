@@ -14,11 +14,14 @@ struct ContentView: View {
                 .font(.system(size:50)) //size
                 .foregroundColor(.green) //coor
             
-            Text("Hello, world!")
+            Text("Welcome!")
                 .font(.title2) //font style
                 .padding() //space
+            
         }
         .padding()
+        
+        ReservationForm()
     }
 }
 

@@ -26,6 +26,17 @@ struct ReservationForm: View {
     @State private var UserWhantsOutdoorSeats = false
     @State private var showValidationError = false
     @State private var showConfirmation = false
+    @State private var summaryAdultText = ""
+    @State private var summaryChildrenText = ""
+    
+    // Functions
+    func guestLabel(_ count: Int) -> String {
+        count == 1 ? "Guest" : "Guests"
+    }
+    
+    func estimateTotal (_ adultCount: Int, _ childrenCount: Int) -> Double {
+        return (Double(adultCount) * 15.30) + (Double(childrenCount) * 8.20)
+    }
     
     var body: some View {
         Form {
@@ -121,13 +132,15 @@ struct ReservationForm: View {
                     previewText =
                     """
                     Name: \(userName.isEmpty ? "Not provided" : userName)
-                    Guests: \(guestCount)
+                    \(guestLabel(guestCount)): \(guestCount)
                     Phone: \(phoneNumber.isEmpty ? "Not provided" : phoneNumber)
                     Occasion: \(occasion.isEmpty ? "Not Provided" : occasion)
                     
                     Optional
                     Allergies: \(alergies.isEmpty ? "None" : alergies)
                     Children: \(childrenCount)
+                    
+                    Total price estimate: $\(String(format: "%.2f", estimateTotal(guestCount, childrenCount)))
                     """
                 }
                 
@@ -155,10 +168,32 @@ struct ReservationForm: View {
                 }
                 
                 if showConfirmation {
-                    Text("Reservación confirmada!")
+                    Text("Reservation confirmed!")
                         .font(.footnote)
                         .foregroundColor(.green)
                         .transition(.opacity.combined(with: .slide))
+                    
+                    VStack() {
+                        HStack() {
+                            Text("Reservation Summary")
+                                .font(.headline)
+                            Spacer()
+                            Image(systemName: "doc.text.magnifyingglass")
+                        }
+                        
+                        // Display Adult Info
+                        HStack {Text("Name:"); Spacer(); Text(userName)}
+                        HStack {Text(guestLabel(guestCount)); Spacer(); Text("\(guestCount)")}
+                        
+                        // Display Children Info
+                        HStack {Text("Children:"); Spacer(); Text("\(childrenCount)")}
+                        
+                        // Estimate
+                        HStack {
+                            Text("Estimation:")
+                            Spacer()
+                            Text("$\(estimateTotal(guestCount, childrenCount), specifier:"%.2f")")}
+                    }
                 }
                 
                 if showValidationError {
