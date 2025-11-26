@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct AboutView: View {
+    // Navigation
+    @Binding var navigationPath: NavigationPath
+    
+    
     var body: some View {
         VStack {
             Text("About Caffinated")
@@ -30,6 +34,22 @@ struct AboutView: View {
                 Image(systemName: "cup.and.saucer")
                     .font(.system(size: 40))
             }
+            
+            // Button to return to home
+            Button(action: {
+                navigationPath.removeLast(navigationPath.count)
+            }) {
+                HStack {
+                    Image(systemName: "house.fill")
+                    Text("Return to Home")
+                }
+                .frame(maxWidth: 200, maxHeight: 10)
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(50)
+            }
+            .padding(.top, 8)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .multilineTextAlignment(.center)
@@ -37,5 +57,5 @@ struct AboutView: View {
 }
 
 #Preview {
-    AboutView()
+    AboutView(navigationPath: .constant(NavigationPath()))
 }

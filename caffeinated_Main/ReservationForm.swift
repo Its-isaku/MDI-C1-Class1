@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ReservationForm: View {
+    // Navigation
+    @Binding var navigationPath: NavigationPath
+    
     // Constants
     let restaurantName = "caffeinated"
     let maxGuest = 10
@@ -45,7 +48,7 @@ struct ReservationForm: View {
                 Text(restaurantName)
                     .font(.title3)
                     .bold()
-                
+                    
                 Text("Reservation Form")
                     .foregroundColor(.secondary)
             }
@@ -193,6 +196,22 @@ struct ReservationForm: View {
                             Text("Estimation:")
                             Spacer()
                             Text("$\(estimateTotal(guestCount, childrenCount), specifier:"%.2f")")}
+                        
+                        // Button to return to home
+                        Button(action: {
+                            navigationPath.removeLast(navigationPath.count)
+                        }) {
+                            HStack {
+                                Image(systemName: "house.fill")
+                                Text("Return to Home")
+                            }
+                            .frame(maxWidth: 200, maxHeight: 10)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(50)
+                        }
+                        .padding(.top, 8)
                     }
                 }
                 
@@ -206,6 +225,7 @@ struct ReservationForm: View {
             
             
         }
+//        .navigationBarBackButtonHidden(true)
         .animation(.easeInOut(duration: 0.3), value: userName.isEmpty)
         .animation(.easeInOut(duration: 0.3), value: guestCount > 8)
         .animation(.easeInOut(duration: 0.3), value: isOutdoorSeats)
@@ -219,5 +239,5 @@ struct ReservationForm: View {
 }
 
 #Preview {
-    ReservationForm()
+    ReservationForm(navigationPath: .constant(NavigationPath()))
 }
