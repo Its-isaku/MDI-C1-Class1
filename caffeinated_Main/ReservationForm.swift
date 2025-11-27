@@ -31,6 +31,8 @@ struct ReservationForm: View {
     @State private var showConfirmation = false
     @State private var summaryAdultText = ""
     @State private var summaryChildrenText = ""
+    @State private var hasInteractedWithName = false
+    @State private var hasInteractedWithPhone = false
     
     // Functions
     func guestLabel(_ count: Int) -> String {
@@ -57,9 +59,12 @@ struct ReservationForm: View {
                 TextField("Name", text: $userName)
                     .textInputAutocapitalization(.words)
                     .autocorrectionDisabled(true)
+                    .onChange(of: userName) {
+                        hasInteractedWithName = true
+                    }
                 
                 // Name Validation
-                if userName.isEmpty {
+                if userName.isEmpty && hasInteractedWithName {
                     Text("Please enter a name.")
                         .font(.footnote)
                         .foregroundStyle(.red)
@@ -95,13 +100,16 @@ struct ReservationForm: View {
             Section(header:Text("Contact")){
                 TextField("Phone", text:$phoneNumber)
                     .keyboardType(.numberPad)
+                    .onChange(of: phoneNumber) {
+                        hasInteractedWithPhone = true
+                    }
                 
-                if phoneNumber.isEmpty {
+                if phoneNumber.isEmpty && hasInteractedWithPhone {
                     Text("Please enter a phone number.")
                         .font(.footnote)
                         .foregroundStyle(.red)
                         .transition(.opacity.combined(with: .slide))
-                } else if !phoneNumber.allSatisfy({ $0.isNumber }) {
+                } else if !phoneNumber.isEmpty && !phoneNumber.allSatisfy({ $0.isNumber }) && hasInteractedWithPhone {
                     Text("Please enter only numbers.")
                         .font(.footnote)
                         .foregroundStyle(.red)
@@ -158,6 +166,10 @@ struct ReservationForm: View {
                 HStack {
                     Spacer()
                     Button("Confirm reservation") {
+                        // Marcar que el usuario intentó confirmar
+                        hasInteractedWithName = true
+                        hasInteractedWithPhone = true
+                        
                         if userName.isEmpty || phoneNumber.isEmpty || !phoneNumber.allSatisfy({ $0.isNumber }) {
                             showValidationError = true
                             showConfirmation = false

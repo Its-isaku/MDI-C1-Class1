@@ -14,6 +14,7 @@ struct AboutView: View {
     
     var body: some View {
         VStack {
+            Image("littleLemonLogo")
             Text("About Caffinated")
                 .font(Font.largeTitle)
                 .fontWeight(.bold)
