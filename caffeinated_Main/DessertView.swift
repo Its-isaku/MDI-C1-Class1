@@ -43,9 +43,6 @@ struct DessertView: View {
                 .padding(.vertical,10)
             }
         }
-        
-        
-        
     }
 }
 

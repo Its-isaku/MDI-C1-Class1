@@ -23,7 +23,7 @@ struct MenuView: View {
     @State private var showMessage = false
     @State private var showAffordable = false
     @State private var showDesserts = false
-    
+    @State private var showPremium = false
     
     // functions
     func getHighestPrice() -> String {
@@ -64,13 +64,31 @@ struct MenuView: View {
     }
     
     var displayMenu: [(name:String, price:Double)] {
-        showAffordable ? SortedMenu.filter {$0.price < 4.0} : SortedMenu
+        if showAffordable == true {
+            return SortedMenu.filter {$0.price < 4.0}
+        } else if showPremium == true {
+            return SortedMenu.filter {$0.price > 4.20}
+        } else {
+            return SortedMenu
+        }
     }
     
     var avaragePrice : Double {
         let prices = menuItems.values
         let total = prices.reduce(0, +)
         return total / Double(prices.count)
+    }
+    
+    var premiumCount: Int {
+        displayMenu.filter { $0.price > 4.20 }.count
+    }
+    
+    var totalPrice: Double {
+        var total = 0.0
+        for item in displayMenu {
+                total += item.price
+            }
+        return total
     }
     
     // Main
@@ -93,6 +111,7 @@ struct MenuView: View {
             VStack(){
                 Toggle("Show welcome Message", isOn: $showMessage)
                 Toggle("Show only affordable items < than $4.0", isOn: $showAffordable)
+                Toggle("Show only Premium Items", isOn: $showPremium)
                 Button("show Desserts") {
                     showDesserts = true
                     print(showDesserts)
@@ -115,15 +134,8 @@ struct MenuView: View {
             }
         
             List {
-                ForEach(displayMenu, id: \.name) { Item in
-                    HStack {
-                        Text(Item.name)
-                            .font(.headline)
-                        Spacer()
-                        Text(String(format: "$%.2f", Item.price))
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical,10)
+                ForEach(displayMenu, id: \.name) { item in
+                    MenuItemRowView(name: item.name, price: item.price)
                 }
             }
             
@@ -132,8 +144,14 @@ struct MenuView: View {
             Section{
                 VStack{
                     Text("Total Items: \(getTotalItems())")
-                    Text("Highest price: \(getHighestPrice())")
-                    Text("Lowest price: \(getLowestPrice())")
+                    Text("Total: \(totalPrice,specifier: "%.2f")")
+                    
+                    HStack{
+                        Text("High: \(getHighestPrice())")
+                        Text("Low: \(getLowestPrice())")
+                        Text("av: \(avaragePrice,specifier: "%.2f")")
+                        Text("Premium: \(premiumCount)")
+                    }
                 }
             }
         }
