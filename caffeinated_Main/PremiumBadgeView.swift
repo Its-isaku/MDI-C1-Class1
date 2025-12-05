@@ -17,13 +17,10 @@ struct PremiumBadgeView: View {
     var body: some View {
         HStack{
             Image(systemName: "star.fill")
-                .foregroundColor(.yellow)
-            
-            Text("Premium")
-                .font(.caption.bold())
+                .foregroundColor(.white)
         }
         .padding(6)
-        .background(Color.orange.opacity(0.2))
+//        .background(Color.white.opacity(0.5))
         .cornerRadius(6)
     }
 }

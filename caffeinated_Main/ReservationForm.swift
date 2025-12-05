@@ -1,11 +1,19 @@
-//
-//  ReservationForm.swift
-//  Test_Store
-//
-//  Created by Isai Magdaleno Almeraz Landeros on 19/11/25.
-//
-
 import SwiftUI
+
+// Estension to make placeholder text be visible
+extension View {
+    func placeholder<Content: View>(
+        when shouldShow: Bool,
+        alignment: Alignment = .leading,
+        @ViewBuilder placeholder: () -> Content
+    ) -> some View {
+        ZStack(alignment: alignment) {
+            placeholder().opacity(shouldShow ? 1 : 0)
+            self
+        }
+    }
+}
+
 
 struct ReservationForm: View {
     // Navigation
@@ -17,7 +25,6 @@ struct ReservationForm: View {
     
     
     // State Variables
-    //  its a Dynamic variable
     @State private var userName = ""
     @State private var guestCount = 1
     @State private var phoneNumber = ""
@@ -44,200 +51,192 @@ struct ReservationForm: View {
     }
     
     var body: some View {
-        Form {
+        
+        VStack(spacing: 0) {
             // Header
-            Section{
-                Text(restaurantName)
-                    .font(.title3)
-                    .bold()
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(restaurantName)
+                        .font(.title)
+                        .bold()
+                        .foregroundColor(.white)
                     
-                Text("Reservation Form")
-                    .foregroundColor(.secondary)
-            }
-            
-            Section(header: Text("Reservation Details")){
-                TextField("Name", text: $userName)
-                    .textInputAutocapitalization(.words)
-                    .autocorrectionDisabled(true)
-                    .onChange(of: userName) {
-                        hasInteractedWithName = true
-                    }
-                
-                // Name Validation
-                if userName.isEmpty && hasInteractedWithName {
-                    Text("Please enter a name.")
-                        .font(.footnote)
-                        .foregroundStyle(.red)
-                        .transition(.opacity.combined(with: .slide))
+                    Text("Reserve")
+                        .foregroundColor(.white)
                 }
+                .padding(.leading, 20)
+                
+                Spacer()
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 20)
+            .background(Color("bg-Black"))
+            
+            Form {
+                
+                Section(header: Text("Contact").foregroundColor(.white)){
+                    // Campo de Nombre
+                    TextField("", text: $userName)
+                        .textInputAutocapitalization(.words)
+                        .autocorrectionDisabled(true)
+                        .foregroundColor(.white)
+                        .onChange(of: userName) {
+                            hasInteractedWithName = true
+                        }
+                        .placeholder(when: userName.isEmpty) {
+                            Text("Enter your name")
+                                .foregroundColor(Color.white.opacity(0.6))
+                        }
                     
-                // Constant
-                Stepper("Guests: \(guestCount)", value: $guestCount, in: 1 ... maxGuest)
-                    if guestCount > 8 {
-                        Text("Please note that for more than 8 guests you need to call ahead.")
+                    if userName.isEmpty && hasInteractedWithName {
+                        Text("Please enter a name.")
+                            .font(.footnote)
+                            .foregroundStyle(.red)
+                            .transition(.opacity.combined(with: .slide))
+                    }
+                    
+                    // Campo de Teléfono
+                    TextField("", text:$phoneNumber)
+                        .keyboardType(.numberPad)
+                        .foregroundColor(.white)
+                        .onChange(of: phoneNumber) {
+                            hasInteractedWithPhone = true
+                        }
+                        .placeholder(when: phoneNumber.isEmpty) {
+                            Text("Phone")
+                                .foregroundColor(Color.white.opacity(0.6))
+                        }
+                    
+                    if phoneNumber.isEmpty && hasInteractedWithPhone {
+                        Text("Please enter a phone number.")
+                            .font(.footnote)
+                            .foregroundStyle(.red)
+                            .transition(.opacity.combined(with: .slide))
+                        
+                    } else if !phoneNumber.isEmpty && !phoneNumber.allSatisfy({ $0.isNumber }) && hasInteractedWithPhone {
+                        Text("Please enter only numbers.")
+                            .font(.footnote)
+                            .foregroundStyle(.red)
+                            .transition(.opacity.combined(with: .slide))
+                    }
+                }
+                .listRowBackground(Color("bg-gray"))
+                .foregroundColor(.white)
+                
+                Section(header: Text("Reservation Details").foregroundColor(.white)){
+                    Stepper("Guests: \(guestCount)", value: $guestCount, in: 1 ... maxGuest)
+                        if guestCount > 8 {
+                            Text("Please note that for more than 8 guests you need to call ahead.")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .transition(.opacity.combined(with: .slide))
+                    }
+                    
+                    Toggle("Outdoor Seating", isOn: $UserWhantsOutdoorSeats)
+                        .tint(.white)
+                        .disabled(!isOutdoorSeats)
+                        .onChange(of: isOutdoorSeats) {
+                            if !isOutdoorSeats {
+                                UserWhantsOutdoorSeats = false
+                            }
+                        }
+                    
+                    if !isOutdoorSeats {
+                        Text("Outdoor seating is currently unavailable")
+                            .font(.footnote)
+                            .foregroundStyle(.red)
+                            .transition(.opacity.combined(with: .slide))
+                    }
+                }
+                .listRowBackground(Color("bg-gray"))
+                .foregroundColor(.white)
+                
+                Section(header:Text("Optional").foregroundColor(.white)){
+                    TextField("", text: $alergies)
+                        .textInputAutocapitalization(.words)
+                        .autocorrectionDisabled(true)
+                        .foregroundColor(.white)
+                        .placeholder(when: alergies.isEmpty) {
+                            Text("Alegries")
+                                .foregroundColor(Color.white.opacity(0.6))
+                        }
+                    
+                    TextField("",  text: $occasion)
+                        .foregroundColor(.white)
+                        .placeholder(when: occasion.isEmpty) {
+                            Text("Occasion (Dinner, Birthday, etc.)")
+                                .foregroundColor(Color.white.opacity(0.6))
+                        }
+                    
+                    Stepper("Children: \(childrenCount)", value: $childrenCount, in: 0 ... 10)
+                    
+                    if childrenCount > 0 {
+                        Text("Kids will get a free dessert!")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                             .transition(.opacity.combined(with: .slide))
-                }
-                
-                Toggle("Outdoor Seating", isOn: $UserWhantsOutdoorSeats)
-                    .disabled(!isOutdoorSeats)  // Desactiva el toggle si no hay outdoor disponible
-                    .onChange(of: isOutdoorSeats) {
-                        // Si outdoor se cierra, desactiva la selección del usuario
-                        if !isOutdoorSeats {
-                            UserWhantsOutdoorSeats = false
-                        }
                     }
-                
-                if !isOutdoorSeats {
-                    Text("Outdoor seating is currently unavailable")
-                        .font(.footnote)
-                        .foregroundStyle(.red)
-                        .transition(.opacity.combined(with: .slide))
-                }
-            }
-            
-            Section(header:Text("Contact")){
-                TextField("Phone", text:$phoneNumber)
-                    .keyboardType(.numberPad)
-                    .onChange(of: phoneNumber) {
-                        hasInteractedWithPhone = true
-                    }
-                
-                if phoneNumber.isEmpty && hasInteractedWithPhone {
-                    Text("Please enter a phone number.")
-                        .font(.footnote)
-                        .foregroundStyle(.red)
-                        .transition(.opacity.combined(with: .slide))
-                } else if !phoneNumber.isEmpty && !phoneNumber.allSatisfy({ $0.isNumber }) && hasInteractedWithPhone {
-                    Text("Please enter only numbers.")
-                        .font(.footnote)
-                        .foregroundStyle(.red)
-                        .transition(.opacity.combined(with: .slide))
-                }
                     
-            }
-            
-            Section(header:Text("Occsion")){
-                TextField("Dinner, Birthday, etc.",  text: $occasion)
-            }
-            
-            Section(header:Text("Optional")){
-                TextField("Alegries", text: $alergies)
-                    .textInputAutocapitalization(.words)
-                    .autocorrectionDisabled(true)
-                
-                Stepper("Children: \(childrenCount)", value: $childrenCount, in: 0 ... 10)
-                
-                if childrenCount > 0 {
-                    Text("Kids will get a free dessert!")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .transition(.opacity.combined(with: .slide))
                 }
+                .listRowBackground(Color("bg-gray"))
+                .foregroundColor(.white)
                 
-            }
-            
-            Section{
-                Button("Preview reservation"){
-                    previewText =
-                    """
-                    Name: \(userName.isEmpty ? "Not provided" : userName)
-                    \(guestLabel(guestCount)): \(guestCount)
-                    Phone: \(phoneNumber.isEmpty ? "Not provided" : phoneNumber)
-                    Occasion: \(occasion.isEmpty ? "Not Provided" : occasion)
-                    
-                    Optional
-                    Allergies: \(alergies.isEmpty ? "None" : alergies)
-                    Children: \(childrenCount)
-                    
-                    Total price estimate: $\(String(format: "%.2f", estimateTotal(guestCount, childrenCount)))
-                    """
-                }
-                
-                Text(previewText)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                    .transition(.opacity.combined(with: .slide))
-                
-            }
-            
-            Section {
-                HStack {
-                    Spacer()
-                    Button("Confirm reservation") {
-                        // Marcar que el usuario intentó confirmar
-                        hasInteractedWithName = true
-                        hasInteractedWithPhone = true
+                Section {
+                    HStack {
+                        Spacer()
                         
-                        if userName.isEmpty || phoneNumber.isEmpty || !phoneNumber.allSatisfy({ $0.isNumber }) {
-                            showValidationError = true
-                            showConfirmation = false
-                        } else {
-                            showValidationError = false
-                            showConfirmation = true
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    Spacer()
-                }
-                
-                if showConfirmation {
-                    Text("Reservation confirmed!")
-                        .font(.footnote)
-                        .foregroundColor(.green)
-                        .transition(.opacity.combined(with: .slide))
-                    
-                    VStack() {
-                        HStack() {
-                            Text("Reservation Summary")
-                                .font(.headline)
-                            Spacer()
-                            Image(systemName: "doc.text.magnifyingglass")
-                        }
-                        
-                        // Display Adult Info
-                        HStack {Text("Name:"); Spacer(); Text(userName)}
-                        HStack {Text(guestLabel(guestCount)); Spacer(); Text("\(guestCount)")}
-                        
-                        // Display Children Info
-                        HStack {Text("Children:"); Spacer(); Text("\(childrenCount)")}
-                        
-                        // Estimate
-                        HStack {
-                            Text("Estimation:")
-                            Spacer()
-                            Text("$\(estimateTotal(guestCount, childrenCount), specifier:"%.2f")")}
-                        
-                        // Button to return to home
-                        Button(action: {
-                            navigationPath.removeLast(navigationPath.count)
-                        }) {
-                            HStack {
-                                Image(systemName: "house.fill")
-                                Text("Return to Home")
+                        Button("Confirm reservation") {
+                            hasInteractedWithName = true
+                            hasInteractedWithPhone = true
+                            
+                            if userName.isEmpty || phoneNumber.isEmpty || !phoneNumber.allSatisfy({ $0.isNumber }) {
+                                showValidationError = true
+                                showConfirmation = false
+                            } else {
+                                showValidationError = false
+                                showConfirmation = true
                             }
-                            .frame(maxWidth: 200, maxHeight: 10)
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(50)
                         }
-                        .padding(.top, 8)
+                        .frame(maxWidth: 200, maxHeight: 10) .padding(10)
+                        .buttonStyle(.glass)
+                        .foregroundColor(.white)
+                        Spacer()
                     }
+                    
+                    if showConfirmation {
+                        VStack() {
+                            Text("Reservation confirmed!")
+                                .font(.footnote)
+                                .foregroundColor(.green)
+                                .transition(.opacity.combined(with: .slide))
+
+                            HStack() { Text("Reservation Summary").font(.headline); Spacer(); Image(systemName: "doc.text.magnifyingglass") }
+                            HStack {Text("Name:"); Spacer(); Text(userName)}
+                            HStack {Text(guestLabel(guestCount)); Spacer(); Text("\(guestCount)")}
+                            HStack {Text("Children:"); Spacer(); Text("\(childrenCount)")}
+                            HStack { Text("Estimation:"); Spacer(); Text("$\(estimateTotal(guestCount, childrenCount), specifier:"%.2f")")}
+                            
+                            Button(action: { navigationPath.removeLast(navigationPath.count) }) {
+                                HStack { Image(systemName: "house.fill"); Text("Return to Home") }
+                                .frame(maxWidth: 200, maxHeight: 10) .padding() .foregroundColor(.white) .cornerRadius(50)
+                            }
+                            .buttonStyle(.glass)
+                            .padding(.top, 8)
+                        }
+                        .foregroundColor(.white)
+                    }
+                    
+                    if showValidationError { Text("Please fill all required fields correctly.").font(.footnote).foregroundStyle(.red).transition(.opacity.combined(with: .slide)) }
                 }
+                .listRowBackground(Color("bg-gray"))
+                .foregroundColor(.white)
                 
-                if showValidationError {
-                    Text("Please fill all required fields correctly.")
-                        .font(.footnote)
-                        .foregroundStyle(.red)
-                        .transition(.opacity.combined(with: .slide))
-                }
             }
-            
+            .scrollContentBackground(.hidden)
+            .background(Color("bg-Black"))
             
         }
-//        .navigationBarBackButtonHidden(true)
+        .bg_Black()
         .animation(.easeInOut(duration: 0.3), value: userName.isEmpty)
         .animation(.easeInOut(duration: 0.3), value: guestCount > 8)
         .animation(.easeInOut(duration: 0.3), value: isOutdoorSeats)

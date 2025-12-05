@@ -20,6 +20,7 @@ struct MenuItemRowView: View {
         HStack {
             Text (name)
                 .font(.headline)
+                .foregroundColor(.white)
             
             Spacer()
             
@@ -28,7 +29,8 @@ struct MenuItemRowView: View {
             }
             
             Text("$\(price, specifier: "%.2f")")
-                .foregroundColor(.secondary)
+                .foregroundColor(.white)
+                .fontWeight(.bold)
             
             
         }

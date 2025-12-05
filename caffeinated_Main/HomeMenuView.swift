@@ -2,7 +2,7 @@
 import SwiftUI
 
 // ----------------View---------------
-struct ContentView: View {
+struct HomeMenuView: View {
 
     // --------Variables & States------
     @State private var navigationPath = NavigationPath()
@@ -82,6 +82,20 @@ struct ContentView: View {
                     }
                     .buttonStyle(.glass)
                     .padding(.top, 8)
+                    
+                    // Button to Menu View with Liquid Glass
+                    Button(action: {
+                        navigationPath.append("customer")
+                    }) {
+                        HStack {
+                            Image(systemName: "person")
+                            Text("See Customets")
+                        }
+                        .frame(maxWidth: 200, maxHeight: 10)
+                        .padding()
+                    }
+                    .buttonStyle(.glass)
+                    .padding(.top, 8)
                 }
                 .navigationDestination(for: String.self) { destination in
                     if destination == "reservation" {
@@ -90,15 +104,17 @@ struct ContentView: View {
                         AboutView(navigationPath: $navigationPath)
                     } else if destination == "menu" {
                         MenuView(navigationPath: $navigationPath)
+                    } else if destination == "customer" {
+                        CustomerSummaryView(navigationPath: $navigationPath)
                     }
                 }
             }
-                // B{lack Background
+                // Black Background
                 .bg_Black()
         }
     }
 }
 
 #Preview {
-    ContentView()
+    HomeMenuView()
 }

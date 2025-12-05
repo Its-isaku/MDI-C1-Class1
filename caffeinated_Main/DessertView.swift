@@ -1,10 +1,3 @@
-//
-//  DessertView.swift
-//  Test_Store
-//
-//  Created by Isai Magdaleno Almeraz Landeros on 29/11/25.
-//
-
 import SwiftUI
 
 struct DessertView: View {
@@ -30,19 +23,28 @@ struct DessertView: View {
     }
     
     var body: some View {
-        
-        List {
-            ForEach(SortedMenu, id: \.name) { Item in
-                HStack {
-                    Text(Item.name)
-                        .font(.headline)
-                    Spacer()
-                    Text(String(format: "$%.2f", Item.price))
-                        .foregroundStyle(.secondary)
+        ZStack {
+            Color("bg-Black")
+            
+            List {
+                ForEach(SortedMenu, id: \.name) { Item in
+                    HStack {
+                        Text(Item.name)
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        Spacer()
+                        Text(String(format: "$%.2f", Item.price))
+                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                    }
+                    .padding(.vertical,10)
+                    .listRowBackground(Color("bg-gray"))
                 }
-                .padding(.vertical,10)
             }
+            .scrollContentBackground(.hidden)
+            .background(Color("bg-Black"))
         }
+        .ignoresSafeArea()
     }
 }
 
